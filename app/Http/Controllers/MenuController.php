@@ -7,6 +7,7 @@ use App\Menu;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Image;
+use Carbon\Carbon;
 
 class MenuController extends Controller
 {
@@ -171,4 +172,116 @@ class MenuController extends Controller
 
         return view('menu.admin.cari')->with('list_menu', $menu);
     }
+
+    public function rekapLaporanPenjualan()
+    {
+        $makanan = 0;
+        $minuman = 0;
+        $snack = 0;
+
+        $date = Carbon::today()->toDateString();
+
+        $rekap = DB::table('detail_transaksi')
+                    ->whereDate('created_at', $date)
+                    ->get();
+
+        foreach($rekap as $item) {
+            $menu = Menu::find($item->menu_kode);
+            if($menu->kategori == 'makanan') {
+                $makanan++;
+            } elseif($menu->kategori == 'minuman') {
+                $minuman++;
+            } else {
+                $snack++;
+            }
+        }
+
+        $data = array(
+            'makanan' => $makanan,
+            'minuman' => $minuman,
+            'snack' => $snack
+        );
+
+        return view('menu.rekap')->with('data', $data);
+    }
+
+    public function masterReport(Request $request)
+    {
+
+        if($request['report_type'] == 'jam') {
+            $date = Carbon::now()->toDateString();
+            $time1 = Carbon::now()->toTimeString();
+            $time2 = strtotime($time1) - 60*60;
+            $time2 = date('H:i:s', $time2);
+
+            $report = DB::table('detail_transaksi')
+                        ->whereBetween('created_at', [$date.$time2, $date.$time1])
+                        ->get();
+
+            foreach($report as $item) {
+                $menu = Menu::find($item->menu_kode);
+                $item->menu_kode = $menu->nama;
+            }
+
+        } elseif($request['report_type'] == 'harian') {
+            // $time = Carbon::now()->toTimeString();
+            // $date1 = Carbon::today()->toDateString();
+            // $date2 = Carbon::yesterday()->toDateString();
+
+            // $report = DB::table('detail_transaksi')
+            //             ->whereBetween('created_at', [$date2.$time, $date1.$time])
+            //             ->get();
+
+            $time = Carbon::now()->toDateString();
+            $report = DB::table('detail_transaksi')
+                        ->whereDate('created_at', $time)
+                        ->get();
+
+            foreach($report as $item) {
+                $menu = Menu::find($item->menu_kode);
+                $item->menu_kode = $menu->nama;
+            }
+
+        } elseif($request['report_type'] == 'mingguan') {
+            $report = DB::table('detail_transaksi')
+                        ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+                        ->get();
+
+            foreach($report as $item) {
+                $menu = Menu::find($item->menu_kode);
+                $item->menu_kode = $menu->nama;
+            }
+
+        } else {
+
+            $report = DB::table('detail_transaksi')
+                        ->whereMonth('created_at', Carbon::now()->format('m'))
+                        ->get();
+            
+            foreach($report as $item) {
+                $menu = Menu::find($item->menu_kode);
+                $item->menu_kode = $menu->nama;
+            }
+
+        }
+
+        return $report;
+
+    }
+
+    public function time()
+    {
+        $report = DB::table('detail_transaksi')
+        ->whereMonth('created_at', Carbon::now()->format('m'))
+        ->get();
+
+        foreach($report as $item) {
+            $menu = Menu::find($item->menu_kode);
+            $item->menu_kode = $menu->nama;
+            }
+        
+
+        echo $report;
+    }
+
 }

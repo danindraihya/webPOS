@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Transaksi;
 use App\Menu;
 use Illuminate\Support\Facades\DB;
+use PDF;
 
 class TransaksiController extends Controller
 {
@@ -124,6 +125,22 @@ class TransaksiController extends Controller
 
         session()->forget('cart');
 
-        return 'berhasil';
+        return $transaksi->id;
+    }
+
+    public function cetak(Request $request)
+    {   
+        $barang = DB::table('detail_transaksi')
+                    ->where('transaksi_id', $request['transaksi_id'])
+                    ->get();
+        
+        foreach($barang as $item) {
+            $menu = Menu::find($item->menu_kode);
+            $item->menu_kode = $menu->nama;
+        }
+
+        $pdf = PDF::loadView('transaksi.cetak', ['barang' => $barang, 'total_harga' => $request['total_harga'], 'cash' => $request['cash'], 'kembali' => $request['kembali']])->setPaper('a4', 'landscape');
+
+        return $pdf->stream("cetak.pdf");
     }
 }
