@@ -71,8 +71,11 @@
           },
           success: function(data){
 
-            $.each(data, function(index, value){
-              markup += "<tr> <th scope='row'>1</th> <td>"+ data[index].menu_kode +"</td> <td>"+ data[index].jumlah +"</td>";
+            $.each(data['dataMakanan'], function(index, value){
+              // console.log(data['dataMakanan'][index]);
+              // console.log(data['dataJumlah'][temp]);
+              let temp = data['dataMakanan'][index];
+              markup += "<tr> <th scope='row'>1</th> <td>"+ data['dataMakanan'][index] +"</td> <td>"+ data['dataJumlah'][temp] +"</td>";
             });
 
             tableBody = $('#rekap');

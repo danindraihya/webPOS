@@ -208,6 +208,9 @@ class MenuController extends Controller
     public function masterReport(Request $request)
     {
 
+        $dataMakanan = array();
+        $dataJumlah = array();
+
         if($request['report_type'] == 'jam') {
             $date = Carbon::now()->toDateString();
             $time1 = Carbon::now()->toTimeString();
@@ -222,6 +225,18 @@ class MenuController extends Controller
                 $menu = Menu::find($item->menu_kode);
                 $item->menu_kode = $menu->nama;
             }
+
+            foreach($report as $item) {
+                if(!in_array($item->menu_kode, $dataMakanan)) {
+                    // $dataMakanan[$item->menu_kode] = $item->menu_kode;
+                    array_push($dataMakanan, $item->menu_kode);
+                    $dataJumlah[$item->menu_kode] = $item->jumlah;
+                } else {
+                    $dataJumlah[$item->menu_kode] += $item->jumlah;
+                }
+            }
+
+
 
         } elseif($request['report_type'] == 'harian') {
             // $time = Carbon::now()->toTimeString();
@@ -242,6 +257,18 @@ class MenuController extends Controller
                 $item->menu_kode = $menu->nama;
             }
 
+            foreach($report as $item) {
+                if(!in_array($item->menu_kode, $dataMakanan)) {
+                    // $dataMakanan[$item->menu_kode] = $item->menu_kode;
+                    array_push($dataMakanan, $item->menu_kode);
+                    $dataJumlah[$item->menu_kode] = $item->jumlah;
+                } else {
+                    $dataJumlah[$item->menu_kode] += $item->jumlah;
+                }
+            }
+
+
+
         } elseif($request['report_type'] == 'mingguan') {
             $report = DB::table('detail_transaksi')
                         ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
@@ -251,6 +278,18 @@ class MenuController extends Controller
                 $menu = Menu::find($item->menu_kode);
                 $item->menu_kode = $menu->nama;
             }
+
+            foreach($report as $item) {
+                if(!in_array($item->menu_kode, $dataMakanan)) {
+                    // $dataMakanan[$item->menu_kode] = $item->menu_kode;
+                    array_push($dataMakanan, $item->menu_kode);
+                    $dataJumlah[$item->menu_kode] = $item->jumlah;
+                } else {
+                    $dataJumlah[$item->menu_kode] += $item->jumlah;
+                }
+            }
+
+            
 
         } else {
 
@@ -263,14 +302,32 @@ class MenuController extends Controller
                 $item->menu_kode = $menu->nama;
             }
 
+            foreach($report as $item) {
+                if(!in_array($item->menu_kode, $dataMakanan)) {
+                    // $dataMakanan[$item->menu_kode] = $item->menu_kode;
+                    array_push($dataMakanan, $item->menu_kode);
+                    $dataJumlah[$item->menu_kode] = $item->jumlah;
+                } else {
+                    $dataJumlah[$item->menu_kode] += $item->jumlah;
+                }
+            }
+
         }
 
-        return $report;
+        $data = array(
+            'dataMakanan' => $dataMakanan,
+            'dataJumlah' => $dataJumlah
+        );
+
+        return $data;
 
     }
 
     public function time()
     {
+        $dataMakanan = array();
+        $dataJumlah = array();
+
         $report = DB::table('detail_transaksi')
         ->whereMonth('created_at', Carbon::now()->format('m'))
         ->get();
@@ -278,10 +335,23 @@ class MenuController extends Controller
         foreach($report as $item) {
             $menu = Menu::find($item->menu_kode);
             $item->menu_kode = $menu->nama;
-            }
-        
+        }
 
-        echo $report;
+        foreach($report as $item) {
+            if(!in_array($item->menu_kode, $dataMakanan)) {
+                $dataMakanan[$item->menu_kode] = $item->menu_kode;
+                $dataJumlah[$item->menu_kode] = $item->jumlah;
+            } else {
+                $dataJumlah[$item->menu_kode] += $item->jumlah;
+            }
+        }
+
+        $data = array([
+            'dataMakanan' => $dataMakanan,
+            'dataJumlah' => $dataJumlah
+        ]);
+
+        return $data;
     }
 
 }
