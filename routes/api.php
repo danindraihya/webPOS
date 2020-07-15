@@ -22,7 +22,9 @@ Route::get('menu', 'Api\TransaksiController@index');
 Route::get('menu/search', 'Api\TransaksiController@cariItem');
 Route::post('menu/addtocart', 'Api\TransaksiController@addToCart');
 Route::post('menu/removefromcart', 'Api\TransaksiController@removeFromCart');
+Route::get('report', 'Api\TransaksiController@masterReport');
 Route::get('menu/coba', 'Api\TransaksiController@coba');
+
 
 Route::post('login', 'Api\UsersController@login');
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

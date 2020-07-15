@@ -268,7 +268,6 @@ class MenuController extends Controller
             }
 
 
-
         } elseif($request['report_type'] == 'mingguan') {
             $report = DB::table('detail_transaksi')
                         ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
@@ -289,7 +288,6 @@ class MenuController extends Controller
                 }
             }
 
-            
 
         } else {
 
@@ -325,33 +323,9 @@ class MenuController extends Controller
 
     public function time()
     {
-        $dataMakanan = array();
-        $dataJumlah = array();
+        $date = Carbon::today()->toDateString();
 
-        $report = DB::table('detail_transaksi')
-        ->whereMonth('created_at', Carbon::now()->format('m'))
-        ->get();
-
-        foreach($report as $item) {
-            $menu = Menu::find($item->menu_kode);
-            $item->menu_kode = $menu->nama;
-        }
-
-        foreach($report as $item) {
-            if(!in_array($item->menu_kode, $dataMakanan)) {
-                $dataMakanan[$item->menu_kode] = $item->menu_kode;
-                $dataJumlah[$item->menu_kode] = $item->jumlah;
-            } else {
-                $dataJumlah[$item->menu_kode] += $item->jumlah;
-            }
-        }
-
-        $data = array([
-            'dataMakanan' => $dataMakanan,
-            'dataJumlah' => $dataJumlah
-        ]);
-
-        return $data;
+        var_dump($date);
     }
 
 }
