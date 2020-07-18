@@ -101,8 +101,8 @@ class TransaksiController extends Controller
             $time2 = date('H:i:s', $time2);
 
             $report = DB::table('detail_transaksi')
-                        ->whereBetween('created_at', [$date.$time2, $date.$time1])
-                        ->get();
+                    ->whereBetween('created_at', [$date." ".$time2, $date." ".$time1])
+                    ->get();
 
             foreach($report as $item) {
                 $menu = Menu::find($item->menu_kode);
