@@ -39,6 +39,8 @@ class TransaksiController extends Controller
     {
         $transaksi = new Transaksi();
 
+        // echo $request; die;
+
         $transaksi->user_id = $request['user_id'];
         $transaksi->total_harga = $request['total_harga'];
         $transaksi->save();

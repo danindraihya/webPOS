@@ -19,6 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::get('menu', 'Api\TransaksiController@index');
+Route::post('menu/bayar', 'Api\TransaksiController@bayar');
 Route::get('menu/search', 'Api\TransaksiController@cariItem');
 Route::post('menu/addtocart', 'Api\TransaksiController@addToCart');
 Route::post('menu/removefromcart', 'Api\TransaksiController@removeFromCart');
