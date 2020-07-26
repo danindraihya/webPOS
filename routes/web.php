@@ -42,3 +42,5 @@ Route::get('/report/jam', 'ReportController@masterReportJam');
 Route::get('/report/harian', 'ReportController@masterReportHarian');
 Route::get('/report/mingguan', 'ReportController@masterReportMingguan');
 Route::get('/report/bulanan', 'ReportController@masterReportBulanan');
+Route::get('/masterReport', 'ReportController@blankMasterReport');
+Route::get('/getMasterReport', 'ReportController@getMasterReport');

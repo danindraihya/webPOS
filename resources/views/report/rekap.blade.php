@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+	<h3 class="ml-3">{{$data['tanggal']}}</h3>
+
     <div class="m-3" style="width: 70%;height: 200px">
         <canvas id="myChart"></canvas>
     </div>

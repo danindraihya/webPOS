@@ -32,7 +32,7 @@ class MenuController extends Controller
         if(auth()->user()->role == 'admin') {
 
             $list_menu = Menu::all();
-            return view('menu/admin/index')->with('list_menu', $list_menu);
+            return view('menu/index')->with('list_menu', $list_menu);
         
         } else {
 
@@ -170,7 +170,7 @@ class MenuController extends Controller
             $menu = Menu::where('nama', 'like' , '%'.$request->input('barang').'%')->get();
         }
 
-        return view('menu.admin.cari')->with('list_menu', $menu);
+        return view('menu.cari')->with('list_menu', $menu);
     }
 
 }

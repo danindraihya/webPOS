@@ -35,6 +35,7 @@ class ReportController extends Controller
         }
 
         $data = array(
+            'tanggal' => date("F jS, Y", strtotime("now")),
             'makanan' => $makanan,
             'minuman' => $minuman,
             'snack' => $snack
@@ -88,10 +89,12 @@ class ReportController extends Controller
         $dataJumlah = array();
 
         $time = Carbon::now()->toDateString();
-            $report = DB::table('detail_transaksi')
-                        ->whereDate('created_at', $time)
-                        ->get();
+        $report = DB::table('detail_transaksi')
+                    ->whereDate('created_at', $time)
+                    ->get();
 
+        var_dump($time); die;
+        
         foreach($report as $item) {
             $menu = Menu::find($item->menu_kode);
             $item->menu_kode = $menu->nama;
@@ -180,5 +183,46 @@ class ReportController extends Controller
 
         return view('report.masterReport')->with('data', $data);
 
+    }
+
+    public function blankMasterReport()
+    {
+        return view('report.masterReport');
+    }
+
+    public function getMasterReport(Request $request)
+    {
+        $dataMakanan = array();
+        $dataJumlah = array();
+
+        $start = $request['startDate'];
+        $end = $request['endDate'];
+        $time = Carbon::now()->toTimeString();
+
+        $report = DB::table('detail_transaksi')
+                    ->whereBetween('created_at', [$start.' '.$time, $end.' '.$time])
+                    ->get();
+
+        foreach($report as $item) {
+            $menu = Menu::find($item->menu_kode);
+            $item->menu_kode = $menu->nama;
+        }
+
+        foreach($report as $item) {
+            if(!in_array($item->menu_kode, $dataMakanan)) {
+                    // $dataMakanan[$item->menu_kode] = $item->menu_kode;
+                array_push($dataMakanan, $item->menu_kode);
+                $dataJumlah[$item->menu_kode] = $item->jumlah;
+            } else {
+                $dataJumlah[$item->menu_kode] += $item->jumlah;
+            }
+        }
+
+        $data = array(
+            'dataMakanan' => $dataMakanan,
+            'dataJumlah' => $dataJumlah
+        );
+
+        return $data;
     }
 }

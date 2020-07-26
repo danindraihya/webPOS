@@ -36,11 +36,20 @@
                     @else
                     @if (Auth::user()->role == 'admin')
                         <ul class="navbar-nav mr-auto">
-                            <li class="nav-item">
-                                <a class="nav-link" href="/">Home</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Rekap Penjualan
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                  <a class="dropdown-item" href="/report">Report</a>
+                                  <a class="dropdown-item" href="/report/jam">Master Report</a>
+                                </div>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/menu">Product</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/transaksi">Transaksi</a>
                             </li>
                         </ul>
                     @else
@@ -55,7 +64,7 @@
                                 </div>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/menu">Transaksi</a>
+                                <a class="nav-link" href="/transaksi">Transaksi</a>
                             </li>
                         </ul>
                     @endif
@@ -101,6 +110,7 @@
         </nav>
 
         <main class="py-4">
+            @include('inc.messages')
             @yield('content')
         </main>
     </div>
