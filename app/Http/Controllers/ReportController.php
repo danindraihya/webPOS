@@ -192,6 +192,16 @@ class ReportController extends Controller
 
     public function getMasterReport(Request $request)
     {
+        if($request['kategori'] == 'all') {
+            $list_report = Menu::all();
+        } elseif($request['kategori'] == 'makanan') {
+            $list_report = Menu::where('kategori', 'makanan')->get();
+        } elseif($request['kategori'] == 'minuman') {
+            $list_report = Menu::where('kategori', 'minuman')->get();
+        } else {
+            $list_report = Menu::where('kategori', 'snack')->get();
+        }
+
         $dataMakanan = array();
         $dataJumlah = array();
 
@@ -208,15 +218,25 @@ class ReportController extends Controller
             $item->menu_kode = $menu->nama;
         }
 
+        foreach($list_report as $item) {
+            array_push($dataMakanan, $item->nama);
+            $dataJumlah[$item->nama] = 0;
+        }
+
         foreach($report as $item) {
-            if(!in_array($item->menu_kode, $dataMakanan)) {
-                    // $dataMakanan[$item->menu_kode] = $item->menu_kode;
-                array_push($dataMakanan, $item->menu_kode);
-                $dataJumlah[$item->menu_kode] = $item->jumlah;
-            } else {
+            if(in_array($item->menu_kode, $dataMakanan)) {
                 $dataJumlah[$item->menu_kode] += $item->jumlah;
             }
         }
+
+        // foreach($report as $item) {
+        //     if(!in_array($item->menu_kode, $dataMakanan)) {
+        //         array_push($dataMakanan, $item->menu_kode);
+        //         $dataJumlah[$item->menu_kode] = $item->jumlah;
+        //     } else {
+        //         $dataJumlah[$item->menu_kode] += $item->jumlah;
+        //     }
+        // }
 
         $data = array(
             'dataMakanan' => $dataMakanan,
@@ -225,4 +245,5 @@ class ReportController extends Controller
 
         return $data;
     }
+
 }

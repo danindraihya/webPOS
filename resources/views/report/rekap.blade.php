@@ -5,8 +5,9 @@
 
     <div class="m-3" style="width: 70%;height: 200px">
         <canvas id="myChart"></canvas>
-    </div>
-
+	</div>
+	
+    <script src="{{asset('js/app.js')}}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 
     <script>

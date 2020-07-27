@@ -1,1 +1,1 @@
-@extends('menu.admin.index')
+@extends('menu.index')

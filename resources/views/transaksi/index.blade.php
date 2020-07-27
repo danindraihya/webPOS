@@ -65,7 +65,7 @@
 
     <div class="list-barang mt-3">
         <div class="card" style="height: 20rem;">
-            <div class="card-body">
+            <div class="card-body" style="overflow: auto;">
                 <table class="table">
                     <thead>
                       <tr>
@@ -131,9 +131,8 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="labelListItem">List Item</h5>
             </div>
-            <div class="modal-body">
-                <div class="list-barang">
-                    <table class="table">
+            <div class="modal-body list-barang">
+                    <table class="table" id="list_menu">
                         <thead>
                           <tr>
                             <th scope="col">Kode</th>
@@ -148,7 +147,6 @@
                                         <tr>
                                             <th scope="row">{{$item->kode}}</th>
                                             <td>{{$item->nama}}</td>
-                                            <button type="submit"></button>
                                             <td>{{$item->harga}}</td>
                                             <td><button type="button" class="btn btn-primary btn-select" id="select" data-kode="<?= $item->kode; ?>" data-nama="<?= $item->nama; ?>" data-dismiss="modal">Select</button></td>
                                         </tr>
@@ -156,7 +154,6 @@
                                 @endif
                         </tbody>
                     </table>
-                </div>
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -165,9 +162,19 @@
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="{{asset('js/app.js')}}"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-    <script src="{{asset('js/app.js')}}"></script>
+    
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+
+
+    <script>
+        $(document).ready(function() {
+            $('#list_menu').DataTable();
+        } );
+    </script>
 
     <script>
         n =  new Date();
@@ -232,6 +239,7 @@
             });
 
             $(document).on('click', '.delete', function(){
+                var value_user = $('#user_id').val();
                 var markup = "";
                 var value_kode = $(this).attr('kode');
                 var total_harga = 0;
@@ -246,7 +254,7 @@
                         },
                         success: function(data){
                             $.each(data, function(index, value){
-                                markup += "<tr> <th scope='row'>user</th> <td>"+ data[index].kode +"</td> <td>"+ data[index].nama +"</td> <td>"+ data[index].harga +"</td> <td>"+ data[index].jumlah +"</td> <td>"+ data[index].jumlah * data[index].harga +"</td> <td><button kode='" + data[index].kode + "' class='btn btn-warning delete' >Hapus</button></td></tr>";
+                                markup += "<tr> <th scope='row'>"+value_user+"</th> <td>"+ data[index].kode +"</td> <td>"+ data[index].nama +"</td> <td>"+ data[index].harga +"</td> <td>"+ data[index].jumlah +"</td> <td>"+ data[index].jumlah * data[index].harga +"</td> <td><button kode='" + data[index].kode + "' class='btn btn-warning delete' >Hapus</button></td></tr>";
                                 total_harga += data[index].harga * data[index].jumlah;
                             });
 
@@ -262,29 +270,37 @@
             $('#bayar').on('click', function(){
                 var value_total_harga = $('#tag_total_harga').attr('value');
                 var value_user_id = $('#user_id').val();
-
                 var value_cash = $('#cash').val();
                 var value_kembali = value_cash - value_total_harga;
-                $('#kembali').val(value_kembali);
+                if(value_kembali < 0) {
+                    alert('Uang pembayaran kurang !');
+                } else {
+                    $('#kembali').val(value_kembali);
 
-                $.ajax({
-                    url: '/transaksi/bayar',
-                    method: 'GET',
-                    data: {
-                        user_id: value_user_id,
-                        total_harga: value_total_harga,
-                    },
-                    success: function(data){
-                        tableBody = $('#listCart');
-                        tag_total_harga = $('div .total_harga');
-                        tableBody.html("");
-                        tag_total_harga.html("<h1 id='tag_total_harga' value='0'>0</h1>");
-                        $('.cetak-transaksi_id').val(data);
-                        $('.cetak-total_harga').val(value_total_harga);
-                        $('.cetak-cash').val(value_cash);
-                        $('.cetak-kembali').val(value_kembali);
-                    }
-                });
+                    $.ajax({
+                        url: '/transaksi/bayar',
+                        method: 'GET',
+                        data: {
+                            user_id: value_user_id,
+                            cash : value_cash,
+                            total_harga: value_total_harga,
+                            kembali : value_kembali
+                        },
+                        success: function(data){
+                            tableBody = $('#listCart');
+                            tag_total_harga = $('div .total_harga');
+                            tableBody.html("");
+                            tag_total_harga.html("<h1 id='tag_total_harga' value='0'>0</h1>");
+                            $('.cetak-transaksi_id').val(data);
+                            $('.cetak-total_harga').val(value_total_harga);
+                            $('.cetak-cash').val(value_cash);
+                            $('.cetak-kembali').val(value_kembali);
+                            alert('Berhasil melakukan pembayaran, segera cetak struk pembayaran');
+                        }
+                    });
+
+                }
+                
             });
 
         });
