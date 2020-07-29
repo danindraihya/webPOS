@@ -97,6 +97,7 @@ class TransaksiController extends Controller
 
         $dataMakanan = array();
         $dataJumlah = array();
+        $jumlah = array();
 
         if($request['report_type'] == 'jam') {
             $date = Carbon::now()->toDateString();
@@ -121,6 +122,10 @@ class TransaksiController extends Controller
                 } else {
                     $dataJumlah[$item->menu_kode] += $item->jumlah;
                 }
+            }
+
+            foreach($dataJumlah as $item) {
+                array_push($jumlah, $item);
             }
 
 
@@ -154,6 +159,10 @@ class TransaksiController extends Controller
                 }
             }
 
+            foreach($dataJumlah as $item) {
+                array_push($jumlah, $item);
+            }
+
 
         } elseif($request['report_type'] == 'mingguan') {
             $report = DB::table('detail_transaksi')
@@ -173,6 +182,10 @@ class TransaksiController extends Controller
                 } else {
                     $dataJumlah[$item->menu_kode] += $item->jumlah;
                 }
+            }
+
+            foreach($dataJumlah as $item) {
+                array_push($jumlah, $item);
             }
 
 
@@ -196,6 +209,11 @@ class TransaksiController extends Controller
                     $dataJumlah[$item->menu_kode] += $item->jumlah;
                 }
             }
+
+            foreach($dataJumlah as $item) {
+                array_push($jumlah, $item);
+            }
+
         }
 
         // $data = array(
@@ -203,10 +221,12 @@ class TransaksiController extends Controller
         //     'dataJumlah' => $dataJumlah
         // );
 
+        
+
         return response()->json([
             'status' => 200,
             'dataMakanan' => $dataMakanan,
-            'dataJumlah' => $dataJumlah
+            'jumlah' => $jumlah
         ]);
 
     }
