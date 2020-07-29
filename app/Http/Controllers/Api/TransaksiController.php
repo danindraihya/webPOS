@@ -98,6 +98,7 @@ class TransaksiController extends Controller
         $dataMakanan = array();
         $dataJumlah = array();
         $jumlah = array();
+        $makanan = array();
 
         if($request['report_type'] == 'jam') {
             $date = Carbon::now()->toDateString();
@@ -210,6 +211,12 @@ class TransaksiController extends Controller
                 }
             }
 
+            arsort($dataJumlah);
+
+            foreach(array_keys($dataJumlah) as $item) {
+                array_push($makanan, $item);
+            }
+
             foreach($dataJumlah as $item) {
                 array_push($jumlah, $item);
             }
@@ -221,11 +228,9 @@ class TransaksiController extends Controller
         //     'dataJumlah' => $dataJumlah
         // );
 
-        
-
         return response()->json([
             'status' => 200,
-            'dataMakanan' => $dataMakanan,
+            'makanan' => $makanan,
             'jumlah' => $jumlah
         ]);
 
