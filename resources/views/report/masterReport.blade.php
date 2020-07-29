@@ -5,27 +5,25 @@
   <div class="m-3">
       <h3>Rekap Laporan Penjualan</h3>
 
-      <div class="row">
-        <div class="col-sm-2">
-          <input type="text" name="dates" id="dates" value="" />
-        </div>
-      </div>
-      <br>
-      <div class="row">
-        <div class="col-md-2">
-          <select id="kategori" class="form-control">
-            <option selected value="all">All</option>
-            <option value="makanan">Makanan</option>
-            <option value="minuman">Minuman</option>
-            <option value="snack">Snack</option>
-          </select>
-        </div>
-        <div class="col-md-2">
-          <button id="getReport" class="btn btn-primary">Lihat</button>
-        </div>
-      </div>
       
-      <br>
+
+    <form method="POST" action="/getMasterReport">
+      @csrf
+        <div class="form-group">
+          <input type="text" class="form-control" name="dates" id="dates"/>     
+        </div>
+        <div class="form-group">
+            <select id="kategori" class="form-control" name="kategori">
+                <option selected value="all">All</option>
+                <option value="makanan">Makanan</option>
+                <option value="minuman">Minuman</option>
+                <option value="snack">Snack</option>
+            </select>
+        </div>
+        <input id="startDate" type="hidden" name="startDate" value="<?= $data['startDate']; ?>">
+        <input id="endDate" type="hidden" name="endDate" value="<?= $data['endDate']; ?>">
+        <button type="submit" id="getReport" class="btn btn-primary">Lihat</button>
+    </form>
     
     <br>
     <br>
@@ -43,6 +41,20 @@
             </tr>
           </thead>
           <tbody id="rekap">
+            @if ($data['dataMakanan'] != null)
+              @php
+                  $count = 1;
+              @endphp
+              @foreach ($data['dataMakanan'] as $item)
+                <tr>
+                  <th scope="row">@php
+                      echo $count; $count++;
+                  @endphp</th>
+                  <td>{{$item}}</td>
+                  <td>{{$data['dataJumlah'][$item]}}</td>
+                </tr>
+              @endforeach
+            @endif
           </tbody>
         </table>
   </div> 
@@ -62,89 +74,22 @@
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
     
-
-
-
   <script>
-    var value_start_date;
-    var value_end_date;
-    var value_show_start_date;
-    var value_show_end_date;
-    var value_kategori;
+    $(document).ready(function() {
 
+      var daterange = "<?= $data['daterange']; ?>";
+      $('#dates').daterangepicker({ startDate: daterange.substring(0,10), endDate: daterange.substring(13,23) });
+      $('#masterReport').DataTable();
+    } );
+  </script>
+  
+<script>
     $('input[name="dates"]').daterangepicker({
         opens: 'left'
       }, function(start, end, label) {
-        value_start_date = start.format('YYYY-MM-DD');
-        value_end_date = end.format('YYYY-MM-DD');
-        value_show_start_date = start.format('MMMM D, YYYY');
-        value_show_end_date = end.format('MMMM D, YYYY')
+         $('#startDate').val(start.format('YYYY-MM-DD'));
+         $('#endDate').val(end.format('YYYY-MM-DD'));
       });
-
-    $('#getReport').on('click', function(){
-      console.log(value_start_date);
-      value_kategori = $('#kategori').val();
-      var markup = "";
-      $.ajax({
-        url: '/getMasterReport',
-        method: 'GET',
-        data: {
-          startDate : value_start_date,
-          endDate : value_end_date,
-          kategori : value_kategori
-        },
-        success: function(data){
-          let count = 1;
-          console.log(data);
-          
-          $.each(data['dataMakanan'], function(index, value){
-              // console.log(data['dataMakanan'][index]);
-              // console.log(data['dataJumlah'][temp]);
-              
-              console.log(count);
-              let temp = data['dataMakanan'][index];
-              markup += "<tr> <th scope='row'>"+ count +"</th> <td>"+ data['dataMakanan'][index] +"</td> <td>"+ data['dataJumlah'][temp] +"</td>";
-              count++;
-            });
-            daterange = $('.daterange');
-            tableBody = $('#rekap');
-            daterange.html("<h3>From : "+value_show_start_date +"</h3><br><h3>To : "+value_show_end_date+"</h3>");
-            tableBody.html(markup);
-            $('#masterReport').DataTable();
-        },
-        error: function(data){
-            console.log(data);
-          }
-      });
-    });
-  </script>
-
-  <script type="text/javascript">
-
-    $('#generate').on('click', function(){
-      var value_report_type = $('#report_type').val();
-      var markup = "";
-        $.ajax({
-          url: '/getMasterReport',
-          method: 'GET',
-          data: {
-            report_type : value_report_type
-          },
-          success: function(data){
-            console.log(data);
-            $.each(data['dataMakanan'], function(index, value){
-              // console.log(data['dataMakanan'][index]);
-              // console.log(data['dataJumlah'][temp]);
-              let temp = data['dataMakanan'][index];
-              markup += "<tr> <th scope='row'>1</th> <td>"+ data['dataMakanan'][index] +"</td> <td>"+ data['dataJumlah'][temp] +"</td>";
-            });
-
-            tableBody = $('#rekap');
-            tableBody.html(markup);
-          },
-          
-        });
-    });
-  </script>
+</script>
 
 @endsection

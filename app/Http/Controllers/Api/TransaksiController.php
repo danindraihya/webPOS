@@ -196,17 +196,17 @@ class TransaksiController extends Controller
                     $dataJumlah[$item->menu_kode] += $item->jumlah;
                 }
             }
-
         }
 
-        $data = array(
-            'dataMakanan' => $dataMakanan,
-            'dataJumlah' => $dataJumlah
-        );
+        // $data = array(
+        //     'dataMakanan' => $dataMakanan,
+        //     'dataJumlah' => $dataJumlah
+        // );
 
         return response()->json([
             'status' => 200,
-            'data' => $data
+            'dataMakanan' => $dataMakanan,
+            'dataJumlah' => $dataJumlah
         ]);
 
     }

@@ -187,11 +187,12 @@ class ReportController extends Controller
 
     public function blankMasterReport()
     {
-        return view('report.masterReport');
+        return view('report.report');
     }
 
     public function getMasterReport(Request $request)
     {
+
         if($request['kategori'] == 'all') {
             $list_report = Menu::all();
         } elseif($request['kategori'] == 'makanan') {
@@ -240,10 +241,13 @@ class ReportController extends Controller
 
         $data = array(
             'dataMakanan' => $dataMakanan,
-            'dataJumlah' => $dataJumlah
+            'dataJumlah' => $dataJumlah,
+            'daterange' => $request['dates'],
+            'startDate' => $request['startDate'],
+            'endDate' => $request['endDate']
         );
 
-        return $data;
+        return view('report.masterReport')->with('data' ,$data);
     }
 
 }

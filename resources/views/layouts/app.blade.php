@@ -44,7 +44,7 @@
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                   <a class="dropdown-item" href="/report">Report</a>
-                                  <a class="dropdown-item" href="/report/jam">Master Report</a>
+                                  <a class="dropdown-item" href="/masterReport">Master Report</a>
                                 </div>
                             </li>
                             <li class="nav-item">
