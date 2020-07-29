@@ -125,6 +125,12 @@ class TransaksiController extends Controller
                 }
             }
 
+            arsort($dataJumlah);
+
+            foreach(array_keys($dataJumlah) as $item) {
+                array_push($makanan, $item);
+            }
+
             foreach($dataJumlah as $item) {
                 array_push($jumlah, $item);
             }
@@ -160,6 +166,12 @@ class TransaksiController extends Controller
                 }
             }
 
+            arsort($dataJumlah);
+
+            foreach(array_keys($dataJumlah) as $item) {
+                array_push($makanan, $item);
+            }
+
             foreach($dataJumlah as $item) {
                 array_push($jumlah, $item);
             }
@@ -183,6 +195,12 @@ class TransaksiController extends Controller
                 } else {
                     $dataJumlah[$item->menu_kode] += $item->jumlah;
                 }
+            }
+
+            arsort($dataJumlah);
+
+            foreach(array_keys($dataJumlah) as $item) {
+                array_push($makanan, $item);
             }
 
             foreach($dataJumlah as $item) {
